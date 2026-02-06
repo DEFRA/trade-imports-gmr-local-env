@@ -20,8 +20,8 @@ function is_ready() {
 }
 
 while ! is_ready; do
-    echo "Waiting until ready"
-    sleep 1
+  echo "Waiting until ready"
+  sleep 1
 done
 
 echo READY > /tmp/READY
