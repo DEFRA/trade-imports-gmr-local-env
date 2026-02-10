@@ -2,7 +2,7 @@ services:
   localstack:
     image: localstack/localstack:4.11.1
     environment:
-      - LOCALSTACK_HOST=127.0.0.1
+      - LOCALSTACK_HOST=localhost
       - SERVICES=s3,sqs,sns,dynamodb
       - LS_LOG=WARN
     env_file:
@@ -12,8 +12,8 @@ services:
     healthcheck:
       test: ["CMD", "test", "-f", "/tmp/READY"]
       interval: 5s
-      start_period: 5s
-      retries: 3
+      start_period: 10s
+      retries: 12
     ports:
       - "4566:4566"
 
@@ -28,19 +28,16 @@ services:
       retries: 3
 
   mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/azure-sql-edge
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=secretPassword!
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          '/opt/mssql-tools*/bin/sqlcmd -S localhost -C -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" -b -o /dev/null',
-        ]
-      interval: 3s
-      start_period: 2s
-      retries: 3
+      interval: 5s
+      retries: 10
+      start_period: 5s
+      test: timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/1433'
+      timeout: 5s
 
   servicebus-emulator:
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
