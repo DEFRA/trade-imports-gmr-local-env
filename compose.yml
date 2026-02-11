@@ -2,7 +2,7 @@ services:
   localstack:
     image: localstack/localstack:4.11.1
     environment:
-      - LOCALSTACK_HOST=127.0.0.1
+      - LOCALSTACK_HOST=localhost
       - SERVICES=s3,sqs,sns,dynamodb
       - LS_LOG=WARN
     env_file:
@@ -12,8 +12,10 @@ services:
     healthcheck:
       test: ["CMD", "test", "-f", "/tmp/READY"]
       interval: 5s
-      start_period: 5s
-      retries: 3
+      start_period: 10s
+      retries: 12
+    ports:
+      - "4566:4566"
 
   mongodb:
     image: mongo:6.0.13
@@ -24,6 +26,41 @@ services:
       interval: 5s
       start_period: 5s
       retries: 3
+
+  mssql:
+    image: mcr.microsoft.com/azure-sql-edge
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=secretPassword!
+    healthcheck:
+      interval: 5s
+      retries: 10
+      start_period: 5s
+      test: timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/1433'
+      timeout: 5s
+
+  servicebus-emulator:
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=secretPassword!
+      - SQL_SERVER=mssql
+      - SQL_WAIT_INTERVAL=0
+    volumes:
+      - ./config/servicebus-emulator.json:/ServiceBus_Emulator/ConfigFiles/Config.json
+    depends_on:
+      mssql:
+        condition: service_healthy
+    ports:
+      - "5672:5672"
+      - "5300:5300"
+
+  wiremock:
+    environment:
+      TZ: Europe/London
+    image: sheyenrath/wiremock.net:latest
+    ports:
+      - "9090:80"
 
   trade-imports-gmr-finder:
     image: defradigital/trade-imports-gmr-finder:${TRADE_IMPORTS_GMR_FINDER:-latest}
