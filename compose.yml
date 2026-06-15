@@ -1,19 +1,11 @@
 services:
-  localstack:
-    image: localstack/localstack:4.11.1
-    environment:
-      - LOCALSTACK_HOST=localhost
-      - SERVICES=s3,sqs,sns,dynamodb
-      - LS_LOG=WARN
+  floci:
+    image: floci/floci:1.5.25-compat
     env_file:
-      - ./config/defaults.env
+      - ./config/aws.env
+      - ./config/floci.env
     volumes:
-      - ./scripts/localstack:/etc/localstack/init/ready.d
-    healthcheck:
-      test: ["CMD", "test", "-f", "/tmp/READY"]
-      interval: 5s
-      start_period: 10s
-      retries: 12
+      - ./scripts/floci:/etc/floci/init/ready.d
     ports:
       - "4566:4566"
 
@@ -66,9 +58,10 @@ services:
     image: defradigital/trade-imports-gmr-finder:${TRADE_IMPORTS_GMR_FINDER:-latest}
     env_file:
       - ./config/defaults.env
+      - ./config/aws.env
       - ./config/trade-imports-gmr-finder.env
     depends_on:
-      localstack:
+      floci:
         condition: service_healthy
       mongodb:
         condition: service_healthy
@@ -84,9 +77,10 @@ services:
     image: defradigital/trade-imports-gmr-processor:${TRADE_IMPORTS_GMR_PROCESSOR:-latest}
     env_file:
       - ./config/defaults.env
+      - ./config/aws.env
       - ./config/trade-imports-gmr-processor.env
     depends_on:
-      localstack:
+      floci:
         condition: service_healthy
       mongodb:
         condition: service_healthy
