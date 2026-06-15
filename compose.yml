@@ -57,7 +57,6 @@ services:
   trade-imports-gmr-finder:
     image: defradigital/trade-imports-gmr-finder:${TRADE_IMPORTS_GMR_FINDER:-latest}
     env_file:
-      - ./config/defaults.env
       - ./config/aws.env
       - ./config/trade-imports-gmr-finder.env
     depends_on:
@@ -76,7 +75,6 @@ services:
   trade-imports-gmr-processor:
     image: defradigital/trade-imports-gmr-processor:${TRADE_IMPORTS_GMR_PROCESSOR:-latest}
     env_file:
-      - ./config/defaults.env
       - ./config/aws.env
       - ./config/trade-imports-gmr-processor.env
     depends_on:
