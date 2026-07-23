@@ -5,7 +5,7 @@ services:
       - ./config/aws.env
       - ./config/floci.env
     volumes:
-      - ./scripts/floci:/etc/floci/init/ready.d
+      - ./scripts/floci/ready.d:/etc/floci/init/ready.d
     ports:
       - "4566:4566"
 
