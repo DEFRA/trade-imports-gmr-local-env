@@ -1,6 +1,6 @@
 services:
   floci:
-    image: floci/floci:1.7.0-compat
+    image: floci/floci:2.0.1-compat
     env_file:
       - ./config/aws.env
       - ./config/floci.env
