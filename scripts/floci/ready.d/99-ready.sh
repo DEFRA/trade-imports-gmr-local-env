@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function is_ready() {
   # test-reports
@@ -19,7 +19,4 @@ function is_ready() {
   return 0
 }
 
-while ! is_ready; do
-  echo "Waiting until ready"
-  sleep 1
-done
+is_ready

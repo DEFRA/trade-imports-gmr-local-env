@@ -1,43 +1,46 @@
 services:
   floci:
-    image: floci/floci:1.5.25-compat
+    image: floci/floci:2.0.1-compat
     env_file:
       - ./config/aws.env
       - ./config/floci.env
     volumes:
-      - ./scripts/floci/ready.d:/etc/floci/init/ready.d
+      - ./scripts/floci/ready.d:/etc/floci/init/ready.d:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail --silent http://localhost:4566/_floci/init | grep -q '\"ready\":true'"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     ports:
       - "4566:4566"
 
   mongodb:
     image: mongo:6.0.28
-    volumes:
-      - ./scripts/mongodb:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.hello().ok"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.hello().ok ? 0 : 1)"]
       interval: 5s
-      start_period: 5s
+      timeout: 5s
       retries: 3
+      start_period: 5s
+    ports:
+      - "27017:27017"
 
   mssql:
-    image: mcr.microsoft.com/azure-sql-edge
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=secretPassword!
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    env_file:
+      - ./config/mssql.env
     healthcheck:
+      test: timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/1433'
       interval: 5s
+      timeout: 5s
       retries: 10
       start_period: 5s
-      test: timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/1433'
-      timeout: 5s
 
   servicebus-emulator:
-    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=secretPassword!
-      - SQL_SERVER=mssql
-      - SQL_WAIT_INTERVAL=0
+    image: servicebus-emulator-with-curl:latest
+    env_file:
+      - ./config/servicebus-emulator.env
     volumes:
       - ./config/servicebus-emulator.json:/ServiceBus_Emulator/ConfigFiles/Config.json
     depends_on:
