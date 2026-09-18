@@ -1,0 +1,14 @@
+name: test
+variables:
+  - name: basic_auth_username
+    value: dev
+  - name: service_finder_url
+    value: https://ephemeral-protected.api.test.cdp-int.defra.cloud/trade-imports-gmr-finder
+  - name: service_publisher_url
+    value: https://ephemeral-protected.api.test.cdp-int.defra.cloud/trade-imports-gmr-processor
+  - secret: true
+    name: basic_auth_password
+    description: ""
+  - secret: true
+    name: cdp_developer_api_key
+    description: ""
