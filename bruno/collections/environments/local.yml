@@ -1,0 +1,14 @@
+name: local
+variables:
+  - name: basic_auth_username
+    value: test
+  - name: service_finder_url
+    value: http://localhost:3000
+  - name: service_publisher_url
+    value: http://localhost:3001
+  - secret: true
+    name: basic_auth_password
+    description: ""
+  - secret: true
+    name: cdp_developer_api_key
+    description: ""

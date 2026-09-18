@@ -1,0 +1,15 @@
+info:
+  name: queue
+  type: http
+  seq: 1
+
+http:
+  method: DELETE
+  url: "{{service_finder_url}}/polling-queue/items"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
