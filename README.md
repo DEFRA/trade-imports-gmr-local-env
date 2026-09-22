@@ -3,13 +3,14 @@
 Docker Compose for running Trade Imports GMR services locally.
 
 - [trade-imports-gmr-finder](https://github.com/DEFRA/trade-imports-gmr-finder)
-- [trade-imports-gmr-processor](https://github.com/DEFRA/trade-imports-gmr-processor) 
+- [trade-imports-gmr-processor](https://github.com/DEFRA/trade-imports-gmr-processor)
 
 ## Prerequisites
 
 ### Dependencies
 
 Install the following:
+
 - [Docker](https://docs.docker.com/engine/)
 - [Docker Compose](https://docs.docker.com/compose/)
 
